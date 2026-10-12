@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#17242a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="screen-orientation" content="landscape"><title>极速漂移 PRO · 横屏写实山道</title>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#17242a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="screen-orientation" content="landscape"><title>极速漂移 PRO · 第一人称山道对决</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08151c;font-family:system-ui,-apple-system,"PingFang SC",sans-serif;color:#fff;touch-action:none}button{font-family:inherit;cursor:pointer}#world{position:fixed;inset:0;background:radial-gradient(circle at 78% 24%,#ffe8b6 0,#ddc2a3 13%,transparent 43%),linear-gradient(#527a94 0%,#8fb6be 52%,#b6c5b8 68%,#5f9486 100%)}#gl{width:100%;height:100%;display:block}#shade{position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,#00111b75,transparent 24%,transparent 75%,#00172356),linear-gradient(0deg,#030e15b5,transparent 24%,transparent 85%,#18323d28)}#speedfx{position:fixed;inset:0;opacity:0;pointer-events:none;background:repeating-conic-gradient(from -8deg at 50% 80%,transparent 0deg 11deg,#f3fcff22 11.3deg,transparent 12deg 24deg);mask-image:radial-gradient(ellipse at 50% 79%,transparent 0%,transparent 30%,#000 90%)}
 #ui{position:fixed;inset:0;pointer-events:none}.hud{position:absolute;left:18px;right:18px;top:calc(13px + env(safe-area-inset-top));display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.logo{font-size:12px;font-weight:1000;letter-spacing:2.3px;font-style:italic;text-shadow:0 2px 9px #000b}.logo span{color:#83ffcb}.micro{font-size:9px;letter-spacing:2px;opacity:.72;margin-top:4px}.topBtns{display:flex;gap:7px;pointer-events:auto}.topBtns button{width:39px;height:39px;background:#071b24a6;color:white;border:1px solid #c7e4e85e;border-radius:12px;font-size:16px;backdrop-filter:blur(6px)}
@@ -37,15 +37,23 @@
   .sheet{width:min(480px,92%);padding:10px 18px;max-height:calc(100% - 8px)}.big{font-size:34px}.en{margin-bottom:5px}.desc{font-size:11px;line-height:1.38;margin-bottom:7px}#mainBtn{height:38px}#gyroStart{margin-top:6px;font-size:11px}.help{margin-top:5px;font-size:9px;line-height:1.3}
 }
 @media (prefers-reduced-motion: reduce){#speedfx{display:none}}
-</style></head><body><div id="landscapeApp"><div id="world"><canvas id="gl"></canvas></div><div id="shade"></div><div id="speedfx"></div><div id="ui">
-<div class="hud"><div><div class="logo">APEX <span>DRIFT</span><sup> PRO</sup></div><div class="micro">MOUNTAIN PASS / TIME ATTACK</div></div><div class="topBtns"><button id="rotate" aria-label="切换横屏" title="横屏 / 全屏">⤢</button><button id="sound" aria-label="声音">♫</button><button id="pause" aria-label="暂停">Ⅱ</button></div></div>
+
+#ui{z-index:4}
+/* True driver-eye cockpit layer, laid out in actual landscape coordinates. */
+#cockpit{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+#rivalBadge{position:absolute;left:50%;top:11px;transform:translateX(-50%);font-size:12px;letter-spacing:.05em;font-weight:900;padding:7px 15px;border:1px solid #d0e9e55c;border-radius:22px;background:#09212ab8;text-shadow:0 1px 3px #000;opacity:0;transition:opacity .2s;white-space:nowrap}
+.playing #rivalBadge{opacity:1}
+#rivalBadge b{color:#f9c87b}#rivalBadge strong{color:#b7ffd2}
+@media (orientation:portrait){#rivalBadge{top:8px;font-size:10px;padding:6px 12px}}
+</style></head><body><div id="landscapeApp"><div id="world"><canvas id="gl"></canvas></div><div id="shade"></div><div id="speedfx"></div><canvas id="cockpit"></canvas><div id="ui">
+<div class="hud"><div><div class="logo">APEX <span>DRIFT</span><sup> PRO</sup></div><div class="micro">COCKPIT VIEW / 1 VS 1 RACE</div></div><div class="topBtns"><button id="rotate" aria-label="切换横屏" title="横屏 / 全屏">⤢</button><button id="sound" aria-label="声音">♫</button><button id="pause" aria-label="暂停">Ⅱ</button></div></div>
 <div id="metrics"><div class="label">SPEED</div><div class="speedRow"><span id="speedNum">000</span><span class="unit">KM/H</span></div><div class="label">DRIFT POINTS</div><div id="score">000000</div><div id="driftCombo"></div></div>
-<div id="rightHud"><canvas id="mini" width="252" height="216"></canvas><div class="miniName">鹰峰山道 · 复杂弯道</div><div class="miniTime" id="time">00:00.0</div></div>
+<div id="rivalBadge">🏁 <b>对手：蓝色闪电</b> · <span id="gap">领先你 75m</span> · <strong id="rank">第 2 / 2 名</strong></div><div id="rightHud"><canvas id="mini" width="252" height="216"></canvas><div class="miniName">鹰峰山道 · 复杂弯道</div><div class="miniTime" id="time">00:00.0</div></div>
 <div id="progress"><div id="progressbar"></div></div><div id="info">赛段 1 / 3 · 0 / 3600 M</div>
 <div id="toast">PERFECT DRIFT!</div><div id="notice"></div>
 <div id="tiltPanel"><span id="tiltLabel">触屏转向</span><div id="tiltTrack"><span id="tiltDot"></span></div><button id="calibrate">重力校准</button><button id="tiltMode">关重力</button><button id="flip">反向</button></div>
 <div id="controls"><div class="steerZone"><button id="left" class="steerBtn" aria-label="左转">❮</button><button id="right" class="steerBtn" aria-label="右转">❯</button></div><div class="actZone"><button id="brake" class="brakeBtn">刹车</button><button id="drift" class="driftBtn">DRIFT<small>长按漂移</small></button></div></div>
-<div id="panel"><div class="sheet"><div class="kicker">LANDSCAPE DRIFT / MOUNTAIN PASS</div><div class="big">极速<b>漂移</b><small> PRO</small></div><div class="en">APEX DRIFT</div><div class="desc" id="panelDesc">单车山道计时挑战 · <strong>横屏驾驶</strong>。<br>发夹弯 / 连续 S 弯 / 陡坡 / 侧滑漂移。<br>倾斜手机转向 · 入弯轻刹 · 长按 DRIFT 甩尾。</div><button id="mainBtn">开始山道挑战 →</button><label id="gyroStart"><input id="gyroCheck" type="checkbox" checked> 优先使用手机重力感应（首次需授权）</label><div class="help"><span class="keycap">手机倾斜</span>转向　<span class="keycap">DRIFT</span>漂移　<span class="keycap">刹车</span>控速<br>画面始终横屏 · 优先请求系统横屏 / 全屏 · 无陀螺仪可用左右按钮 · 离线运行</div></div></div>
+<div id="panel"><div class="sheet"><div class="kicker">COCKPIT CAMERA / RIVAL DUEL</div><div class="big">极速<b>漂移</b><small> PRO</small></div><div class="en">APEX DRIFT</div><div class="desc" id="panelDesc">驾驶舱第一人称 · <strong>1 对 1 山道竞速</strong>。<br>只有一位蓝色 AI 对手：它会入弯减速、出弯加速。<br>横屏倾斜转向 · 刹车入弯 · 长按 DRIFT 漂移超车。</div><button id="mainBtn">开始第一人称竞速 →</button><label id="gyroStart"><input id="gyroCheck" type="checkbox" checked> 优先使用手机重力感应（首次需授权）</label><div class="help"><span class="keycap">手机倾斜</span>转向　<span class="keycap">DRIFT</span>漂移　<span class="keycap">刹车</span>控速<br>固定横屏 · 驾驶舱视角 · 一名 AI 竞争者 · 无重力权限时可用左右按钮</div></div></div>
 <div id="unsupported">当前浏览器无法创建 WebGL 3D 画面。建议使用较新的 Chrome / Safari 并开启硬件加速。</div>
 </div></div>
 <script>
@@ -200,6 +208,32 @@ function carModel(){let p=pos(car.s,car.x,.092);ct={x:p[0],y:p[1]+(car.offroad?.
  // Wheel wells and rotating faceted tires with 5-spoke metallic rims.
  for(let x of [-1.24,1.24]){wheelDetailed(x,1.39,Math.sign(x));wheelDetailed(x,-1.46,Math.sign(x));}
 }
+// One independently simulated AI sports car. The player's own exterior model is hidden in cockpit view.
+function rivalModel(){
+ if(ai.s<car.s-14||ai.s>car.s+460||ai.s>=GOAL+1)return;
+ let p=pos(ai.s,ai.x,.085);ct={x:p[0],y:p[1],z:p[2],a:pathAt(ai.s).a};
+ const paint=[.090,.315,.73],shine=[.18,.53,.95],deep=[.035,.09,.20],dark=[.07,.095,.12],glaze=[.095,.175,.23];
+ // Ground contact / shadow / floor.
+ Cbox(0,.055,0,2.75,.045,4.65,[.18,.18,.17],7);
+ Cbox(0,.25,0,2.46,.36,4.44,dark,7);
+ Cbox(0,.43,-.10,2.48,.38,4.36,paint);
+ Cquad([-1.18,.62,2.06],[1.18,.62,2.06],[1.12,.78,-2.02],[-1.12,.78,-2.02],paint);
+ Cquad([-1.12,.72,1.26],[1.12,.72,1.26],[1.02,.67,2.13],[-1.02,.67,2.13],shine);
+ Cquad([-.87,.81,.82],[.87,.81,.82],[.66,1.48,.04],[-.66,1.48,.04],glaze,6);
+ Cquad([-.66,1.49,.04],[.66,1.49,.04],[.65,1.48,-1.02],[-.65,1.48,-1.02],paint);
+ Cquad([-.65,1.47,-1.03],[.65,1.47,-1.03],[1.02,.78,-1.61],[-1.02,.78,-1.61],glaze,6);
+ for(const s of [-1,1]){
+  Cquad([s*.89,.81,.82],[s*.66,1.48,.04],[s*.65,1.48,-1.01],[s*1.03,.82,-1.58],glaze,6);
+  Cbox(s*.84,.75,2.03,.37,.065,.25,[.92,.94,.79],3);
+  Cbox(s*.82,.61,-2.20,.84,.11,.11,[.9,.1,.09],3);
+  Cbox(s*1.23,.90,.62,.34,.18,.43,deep);
+  wheelDetailed(s*1.24,1.34,s);wheelDetailed(s*1.24,-1.45,s);
+ }
+ Cbox(0,.31,-2.19,1.20,.17,.14,deep,7);
+ Cbox(-.79,.83,-1.94,.095,.47,.1,deep,7);Cbox(.79,.83,-1.94,.095,.47,.1,deep,7);
+ Cbox(0,1.26,-2.04,2.57,.115,.45,deep,7);
+ Cbox(0,1.35,-2.05,2.34,.04,.29,shine,1);
+}
 function skidGeometry(){for(const mark of skidMarks){quad(mark.a,mark.b,mark.c,mark.d,COL.mark);}}
 function smokeGeometry(eye){const dx=car.x||1;let dir=norm([camT[2]-eye[2],0,-(camT[0]-eye[0])]);for(const p of smoke){let r=p.r*(.8+p.age*1.2),y=p.y+p.age*1.65,z=p.z,x=p.x,c=[.58+p.age*.12,.72+p.age*.08,.71+p.age*.07];quad([x-dir[0]*r,y-r*.25,z-dir[2]*r],[x+dir[0]*r,y-r*.25,z+dir[2]*r],[x+dir[0]*r,y+r*1.2,z+dir[2]*r],[x-dir[0]*r,y+r*1.2,z-dir[2]*r],c,4);}}
 function backgrounds(){
@@ -221,23 +255,78 @@ function norm(v){let l=Math.hypot(...v)||1;return v.map(x=>x/l)}function sub(a,b
 function lookAt(eye,focus){let z=norm(sub(eye,focus)),x=norm(cross([0,1,0],z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1])}
 function proj(fov,aspect,near,far){let f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0])}
 function mul(a,b){let o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++)o[i+j*4]=a[i]*b[j*4]+a[i+4]*b[j*4+1]+a[i+8]*b[j*4+2]+a[i+12]*b[j*4+3];return o;}
-let car={s:0,x:0,yaw:0,yawVel:0,latSlip:0,v:0,drifting:false,offroad:false},run=false,paused=false,completed=false,clock=0,points=0,combo=0,driftTime=0,comboTimer=0,sector=1,flash=0,toastTime=0,noticeTime=0,held={left:false,right:false,drift:false,brake:false},tilt={active:false,available:false,raw:0,zero:0,value:0,reverse:1,requested:false},gyroRead=0,gyroDesired=true,shake=0,camE=null,camT=null,soundEnabled=true,audioCtx,engine,filter,gain;
-const minimap=$('mini'),mapCtx=minimap.getContext('2d');
-function mapDraw(){if(!mapCtx)return;const ctx=mapCtx;let w=minimap.width,h=minimap.height;ctx.clearRect(0,0,w,h);let pts=path.filter((_,i)=>i%8===0),minx=Infinity,maxx=-Infinity,minz=Infinity,maxz=-Infinity;for(const p of pts){minx=Math.min(minx,p.x);maxx=Math.max(maxx,p.x);minz=Math.min(minz,p.z);maxz=Math.max(maxz,p.z);}let k=Math.min((w-26)/(maxx-minx||1),(h-28)/(maxz-minz||1));let f=p=>[13+(p.x-minx)*k,12+(p.z-minz)*k];ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#071a22';ctx.lineWidth=13;ctx.beginPath();pts.forEach((p,i)=>{let [x,y]=f(p);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.strokeStyle='#6eb3a0';ctx.lineWidth=6;ctx.stroke();ctx.strokeStyle='#a9ffe0';ctx.lineWidth=7;ctx.beginPath();let finish=f(pathAt(GOAL));ctx.moveTo(finish[0]-3,finish[1]-3);ctx.lineTo(finish[0]+3,finish[1]+3);ctx.stroke();let p=f(pathAt(car.s));ctx.fillStyle='#fdfbc8';ctx.shadowBlur=12;ctx.shadowColor='#b9ffe6';ctx.beginPath();ctx.arc(p[0],p[1],6,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;}
+let ai={s:78,x:1.0,v:24,finishTime:0,hitCooldown:0},car={s:0,x:0,yaw:0,yawVel:0,latSlip:0,v:0,drifting:false,offroad:false},run=false,paused=false,completed=false,clock=0,points=0,combo=0,driftTime=0,comboTimer=0,sector=1,flash=0,toastTime=0,noticeTime=0,held={left:false,right:false,drift:false,brake:false},tilt={active:false,available:false,raw:0,zero:0,value:0,reverse:1,requested:false},gyroRead=0,gyroDesired=true,shake=0,camE=null,camT=null,soundEnabled=true,audioCtx,engine,filter,gain;
+const minimap=$('mini'),mapCtx=minimap.getContext('2d'),cockpit=$('cockpit'),dashCtx=cockpit.getContext('2d');
+function mapDraw(){if(!mapCtx)return;const ctx=mapCtx;let w=minimap.width,h=minimap.height;ctx.clearRect(0,0,w,h);let pts=path.filter((_,i)=>i%8===0),minx=Infinity,maxx=-Infinity,minz=Infinity,maxz=-Infinity;for(const p of pts){minx=Math.min(minx,p.x);maxx=Math.max(maxx,p.x);minz=Math.min(minz,p.z);maxz=Math.max(maxz,p.z);}let k=Math.min((w-26)/(maxx-minx||1),(h-28)/(maxz-minz||1));let f=p=>[13+(p.x-minx)*k,12+(p.z-minz)*k];ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#071a22';ctx.lineWidth=13;ctx.beginPath();pts.forEach((p,i)=>{let [x,y]=f(p);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.strokeStyle='#6eb3a0';ctx.lineWidth=6;ctx.stroke();ctx.strokeStyle='#a9ffe0';ctx.lineWidth=7;ctx.beginPath();let finish=f(pathAt(GOAL));ctx.moveTo(finish[0]-3,finish[1]-3);ctx.lineTo(finish[0]+3,finish[1]+3);ctx.stroke();let p=f(pathAt(car.s));ctx.fillStyle='#fdfbc8';ctx.shadowBlur=12;ctx.shadowColor='#b9ffe6';ctx.beginPath();ctx.arc(p[0],p[1],6,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+let rival=f(pathAt(Math.min(ai.s,GOAL)));ctx.fillStyle='#60b9ff';ctx.strokeStyle='#0b334f';ctx.lineWidth=3;ctx.beginPath();ctx.arc(rival[0],rival[1],5.4,0,Math.PI*2);ctx.fill();ctx.stroke();}
+
 function draw(){const w=Math.max(canvas.clientWidth,1),h=Math.max(canvas.clientHeight,1),dpr=Math.min(window.devicePixelRatio||1,w>h?1.45:1.14);let ww=Math.round(w*dpr),hh=Math.round(h*dpr);if(canvas.width!==ww||canvas.height!==hh){canvas.width=ww;canvas.height=hh;gl.viewport(0,0,ww,hh);}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
- let p=pos(car.s,car.x,1.1),a=pathAt(car.s).a+car.yaw*.3,f=[Math.sin(a),0,Math.cos(a)],r=[Math.cos(a),0,-Math.sin(a)];let look=p.map((v,i)=>v+f[i]*(w>h?20:20));look[1]+=.8;
- let want=[p[0]-f[0]*(w>h?9.6:12.5)+r[0]*car.latSlip*.016,p[1]+(w>h?3.85:4.7),p[2]-f[2]*(w>h?9.6:12.5)+r[2]*car.latSlip*.016];want[1]+=Math.sin(clock*49)*shake*.1;
- if(!camE){camE=want.slice();camT=look.slice();}for(let i=0;i<3;i++){camE[i]=mix(camE[i],want[i],.12);camT[i]=mix(camT[i],look[i],.18);}
- let view=lookAt(camE,camT),mat=mul(proj(((w>h?63:65)+Math.min(6,car.v/9))*RAD,w/h,.18,1000),view);
+ // Driver-eye camera at the left front seat: both position and heading are in track world coordinates.
+ let a=pathAt(car.s).a+car.yaw*.81,f=[Math.sin(a),0,Math.cos(a)],r=[Math.cos(a),0,-Math.sin(a)];
+ let seat=pos(car.s,car.x-.33,1.47),bob=run?(Math.sin(clock*36)*.012+Math.sin(clock*15)*.018)*Math.min(1,car.v/35):0;
+ let want=[seat[0]+f[0]*.42+r[0]*car.latSlip*.0017,seat[1]+bob+Math.sin(clock*29)*shake*.014,seat[2]+f[2]*.42+r[2]*car.latSlip*.0017];
+ let look=[want[0]+f[0]*55,want[1]+1.35+Math.sin(car.yaw)*.24,want[2]+f[2]*55];
+ if(!camE){camE=want.slice();camT=look.slice();}for(let i=0;i<3;i++){camE[i]=mix(camE[i],want[i],.27);camT[i]=mix(camT[i],look[i],.27);}
+ let view=lookAt(camE,camT),mat=mul(proj((73+Math.min(5,car.v/12))*RAD,w/h,.12,1000),view);
  gl.uniformMatrix4fv(loc.mvp,false,mat);gl.uniform3fv(loc.eye,camE);
- V.length=0;backgrounds();trackGeometry();skidGeometry();carModel();let arr=new Float32Array(V);gl.bindBuffer(gl.ARRAY_BUFFER,vbo);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,arr.length/10);
+ V.length=0;backgrounds();trackGeometry();skidGeometry();rivalModel();let arr=new Float32Array(V);gl.bindBuffer(gl.ARRAY_BUFFER,vbo);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,arr.length/10);
+ drawCockpit(w,h);
  if(smoke.length){V.length=0;smokeGeometry(camE);let sv=new Float32Array(V);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.bufferData(gl.ARRAY_BUFFER,sv,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,sv.length/10);gl.depthMask(true);gl.disable(gl.BLEND);}
 }
-function reset(){car={s:0,x:0,yaw:0,yawVel:0,latSlip:0,v:7.5,drifting:false,offroad:false};clock=0;points=0;combo=0;driftTime=0;comboTimer=0;sector=1;flash=0;shake=0;toastTime=0;camE=camT=null;skidMarks=[];skidPrev=null;smoke=[];smokeTimer=0;mapDraw();hud();}
+function drawCockpit(w,h){
+ if(!dashCtx)return;
+ let pxr=Math.min(window.devicePixelRatio||1,1.6),W=Math.round(w*pxr),H=Math.round(h*pxr);
+ if(cockpit.width!==W||cockpit.height!==H){cockpit.width=W;cockpit.height=H;}
+ let ctx=dashCtx;ctx.setTransform(pxr,0,0,pxr,0,0);ctx.clearRect(0,0,w,h);
+ // Oblique A-pillars frame the road, never block the open windscreen.
+ ctx.lineJoin='round';
+ let frame=ctx.createLinearGradient(0,0,w,0);frame.addColorStop(0,'#111c24');frame.addColorStop(.5,'#445159');frame.addColorStop(1,'#111820');
+ ctx.fillStyle=frame;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(w*.095,0);ctx.lineTo(w*.17,h*.64);ctx.lineTo(w*.105,h*.83);ctx.lineTo(0,h*.45);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.moveTo(w,0);ctx.lineTo(w*.96,0);ctx.lineTo(w*.87,h*.64);ctx.lineTo(w*.92,h*.86);ctx.lineTo(w,h*.52);ctx.closePath();ctx.fill();
+ ctx.strokeStyle='#68757a88';ctx.lineWidth=Math.max(2,w*.003);ctx.beginPath();ctx.moveTo(w*.094,0);ctx.lineTo(w*.17,h*.64);ctx.moveTo(w*.961,0);ctx.lineTo(w*.87,h*.64);ctx.stroke();
+ // Hood glint, distant from the lens in lower windscreen area.
+ ctx.fillStyle='#b6372e';ctx.beginPath();ctx.moveTo(w*.36,h*.895);ctx.quadraticCurveTo(w*.5,h*.82,w*.64,h*.90);ctx.lineTo(w*.69,h);ctx.lineTo(w*.31,h);ctx.closePath();ctx.fill();
+ ctx.strokeStyle='#ffb69a5d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(w*.42,h*.872);ctx.quadraticCurveTo(w*.52,h*.853,w*.59,h*.878);ctx.stroke();
+ // Dashboard textured soft-touch top with a concave glare shield.
+ let top=h*.725,grad=ctx.createLinearGradient(0,top,0,h);grad.addColorStop(0,'#24323b');grad.addColorStop(.16,'#172128');grad.addColorStop(.65,'#080e13');grad.addColorStop(1,'#111820');
+ ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(0,top+18);ctx.quadraticCurveTo(w*.28,top-15,w*.49,top+22);ctx.quadraticCurveTo(w*.72,top-10,w,top+18);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+ ctx.strokeStyle='#95a2ac51';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,top+18);ctx.quadraticCurveTo(w*.28,top-15,w*.49,top+22);ctx.quadraticCurveTo(w*.72,top-10,w,top+18);ctx.stroke();
+ // Dashboard secondary digital tachometer right of wheel.
+ let dx=w*.72,dy=h*.89,ds=Math.min(h*.13,56);
+ ctx.fillStyle='#0b141e';ctx.strokeStyle='#667b82';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(dx-ds*1.5,dy-ds*.70,ds*3,ds*1.4,ds*.15);ctx.fill();ctx.stroke();
+ ctx.font=`800 ${Math.max(13,ds*.52)}px system-ui`;ctx.fillStyle='#f3f7eb';ctx.textAlign='center';ctx.fillText(String(Math.round(car.v*3.6)),dx,dy+ds*.19);
+ ctx.font=`700 ${Math.max(8,ds*.20)}px system-ui`;ctx.fillStyle='#77ceae';ctx.fillText('KM/H  •  1 VS 1',dx,dy+ds*.50);
+ // Driver's steering wheel, turn angle follows actual yaw velocity and lateral load.
+ const cx=w*.325,cy=h*1.045,R=Math.min(h*.31,w*.16),theta=clamp(car.yawVel*.75+car.yaw*.18,-.53,.53);
+ ctx.save();ctx.translate(cx,cy);ctx.rotate(theta);
+ ctx.fillStyle='#05080b';ctx.beginPath();ctx.ellipse(0,0,R*1.22,R*1.15,0,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle='#adb9b9';ctx.lineWidth=Math.max(7,R*.15);ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.stroke();
+ ctx.strokeStyle='#172227';ctx.lineWidth=Math.max(4,R*.085);ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.stroke();
+ ctx.strokeStyle='#303d45';ctx.lineWidth=R*.21;for(let t of [-.20,Math.PI+.20,Math.PI*1.5]){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(t)*R*.84,Math.sin(t)*R*.84);ctx.stroke();}
+ ctx.fillStyle='#101b23';ctx.strokeStyle='#7c8e93';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-R*.38,-R*.27,R*.76,R*.54,R*.11);ctx.fill();ctx.stroke();
+ ctx.fillStyle='#aefbdd';ctx.font=`900 ${Math.max(9,R*.22)}px system-ui`;ctx.textAlign='center';ctx.fillText('APEX',0,R*.075);
+ ctx.restore();
+ // Low profile reflections on windscreen. Never a large opaque overlay.
+ ctx.strokeStyle='rgba(245,250,255,.09)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(w*.22,h*.17);ctx.lineTo(w*.48,h*.08);ctx.stroke();
+}
+function reset(){ai={s:78,x:1.0,v:24,finishTime:0,hitCooldown:0};car={s:0,x:0,yaw:0,yawVel:0,latSlip:0,v:7.5,drifting:false,offroad:false};clock=0;points=0;combo=0;driftTime=0;comboTimer=0;sector=1;flash=0;shake=0;toastTime=0;camE=camT=null;skidMarks=[];skidPrev=null;smoke=[];smokeTimer=0;mapDraw();hud();}
 function toast(t){$('toast').textContent=t;$('toast').style.opacity=1;$('toast').style.transform='translate(-50%,-50%) scale(1)';toastTime=1.5;}
 function notice(t){$('notice').textContent=t;$('notice').style.opacity=1;noticeTime=3.2;}
-function hud(){$('speedNum').textContent=String(Math.round(car.v*3.6)).padStart(3,'0');$('score').textContent=Math.round(points).toString().padStart(6,'0');$('driftCombo').textContent=car.drifting&&Math.abs(car.yaw)>.09?`侧滑 ${Math.round(Math.abs(car.yaw)*180/Math.PI)}°  ·  COMBO ×${Math.min(5,1+Math.floor(driftTime/2))}`:'';$('progressbar').style.width=(100*clamp(car.s/GOAL,0,1))+'%';$('info').textContent=`赛段 ${sector} / 3 · ${Math.floor(car.s)} / ${GOAL} M`;$('time').textContent=fmt(clock);$('tiltDot').style.left=(19+tilt.value*18)+'px';$('tiltLabel').textContent=tilt.active?'重力转向':'触屏转向';$('tiltMode').textContent=tilt.active?'关重力':'开重力';}
+function hud(){$('speedNum').textContent=String(Math.round(car.v*3.6)).padStart(3,'0');$('score').textContent=Math.round(points).toString().padStart(6,'0');$('driftCombo').textContent=car.drifting&&Math.abs(car.yaw)>.09?`侧滑 ${Math.round(Math.abs(car.yaw)*180/Math.PI)}°  ·  COMBO ×${Math.min(5,1+Math.floor(driftTime/2))}`:'';$('progressbar').style.width=(100*clamp(car.s/GOAL,0,1))+'%';$('info').textContent=`赛段 ${sector} / 3 · ${Math.floor(car.s)} / ${GOAL} M`;$('time').textContent=fmt(clock);$('tiltDot').style.left=(19+tilt.value*18)+'px';$('tiltLabel').textContent=tilt.active?'重力转向':'触屏转向';$('tiltMode').textContent=tilt.active?'关重力':'开重力';let ahead=ai.s-car.s;$('gap').textContent=ai.finishTime?'对手已冲线':Math.abs(ahead)<3?'并排行驶':ahead>0?'对手领先 '+Math.round(ahead)+'m':'你领先 '+Math.round(-ahead)+'m';$('rank').textContent=(car.s>ai.s?'第 1 / 2 名':'第 2 / 2 名');}
 function fmt(t){let m=Math.floor(t/60),s=Math.floor(t%60),dec=Math.floor(t%1*10);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${dec}`;}
+function updateOpponent(dt){
+ if(ai.s>=GOAL)return;
+ let turn=Math.abs(kappa(Math.min(GOAL,ai.s+38))),target=clamp(40.0-1320*turn+3.1*Math.sin(ai.s*.0047),23.5,42);
+ ai.v+=clamp(target-ai.v,-8.2*dt,3.0*dt);
+ ai.s=Math.min(GOAL,ai.s+ai.v*dt);
+ ai.x=mix(ai.x,1.08*Math.sin(ai.s*.009+.7)+.53*Math.sin(ai.s*.021),1-Math.exp(-dt*2.5));
+ ai.hitCooldown=Math.max(0,ai.hitCooldown-dt);
+ if(!ai.finishTime&&ai.s>=GOAL){ai.finishTime=clock;notice('AI 对手已经冲线！加速完成比赛');}
+ // Contact only when both longitudinal positions and lane envelopes overlap.
+ if(ai.hitCooldown<=0&&Math.abs(ai.s-car.s)<3.7&&Math.abs(ai.x-car.x)<2.26){
+   ai.hitCooldown=2.0;car.v=Math.max(8,car.v*.76);ai.v=Math.max(13,ai.v*.87);shake=.55;notice('与对手擦碰 · 速度下降');
+ }
+}
 function physics(dt){if(!run||paused)return;clock+=dt;
  let steering=(held.right?1:0)-(held.left?1:0);if(Math.abs(steering)<.5&&tilt.active)steering=tilt.value;
  let driftHeld=held.drift&&car.v>11;car.drifting=driftHeld;
@@ -247,7 +336,7 @@ function physics(dt){if(!run||paused)return;clock+=dt;
  car.yaw+=car.yawVel*dt;let advance=car.v*dt*Math.max(.5,Math.cos(car.yaw));car.yaw-=curve*advance;car.yaw*=Math.exp(-dt*(driftHeld?.19:.60));car.yaw=clamp(car.yaw,-.95,.95);
  // Lateral tire momentum persists while drifting and is damped on normal grip.
  let lateralTarget=(Math.sin(car.yaw)*car.v)+(driftHeld?steering*2.6:0);car.latSlip=mix(car.latSlip,lateralTarget,1-Math.exp(-dt*(driftHeld?1.65:5.8)));car.x+=car.latSlip*dt;
- car.s=Math.min(GOAL,car.s+advance);
+ car.s=Math.min(GOAL,car.s+advance);updateOpponent(dt);
  car.offroad=Math.abs(car.x)>6.65;
  // Persistent tire tracks plus expanding 3D smoke puffs under a sustained slide.
  if(driftHeld&&Math.abs(car.yaw)>.065&&!car.offroad){let angle=pathAt(car.s).a+car.yaw;let sideVec=[Math.cos(angle)*.09,0,-Math.sin(angle)*.09],pair=[pos(car.s,car.x-1.15,.073),pos(car.s,car.x+1.15,.073)];if(skidPrev&&car.s-skidPrev.s<5){for(let i=0;i<2;i++){let a=skidPrev.pair[i],b=pair[i],off=sideVec;skidMarks.push({s:car.s,a:[a[0]-off[0],a[1],a[2]-off[2]],b:[a[0]+off[0],a[1],a[2]+off[2]],c:[b[0]+off[0],b[1],b[2]+off[2]],d:[b[0]-off[0],b[1],b[2]-off[2]]});}}skidPrev={s:car.s,pair};smokeTimer-=dt;if(smokeTimer<=0){smokeTimer=.065;for(let i=0;i<2;i++)smoke.push({x:pair[i][0],y:pair[i][1]+.3,z:pair[i][2],age:0,r:.37});}}else skidPrev=null;
@@ -258,7 +347,7 @@ function physics(dt){if(!run||paused)return;clock+=dt;
  carSpin+=car.v*dt/.49;shake=Math.max(0,shake-dt*.9);toastTime-=dt;noticeTime-=dt;if(toastTime<=0)$('toast').style.opacity=0;if(noticeTime<=0)$('notice').style.opacity=0;
  $('speedfx').style.opacity=driftHeld&&Math.abs(car.yaw)>.11?'.32':(car.v>42?'.12':'0');
  hud();if(Math.floor(clock*6)!==Math.floor((clock-dt)*6))mapDraw();audioUpdate();}
-function finish(){run=false;completed=true;document.body.classList.remove('playing');$('panel').classList.remove('hide');let best;try{best=Number(localStorage.getItem('apex_drift_best')||0);if(!best||clock<best){best=clock;localStorage.setItem('apex_drift_best',clock)}}catch(e){best=clock} $('panelDesc').innerHTML=`🏁 <strong>已完成山道挑战！</strong><br>你的成绩：${fmt(clock)} · 漂移分数：${Math.round(points).toLocaleString()}<br>个人最快：${fmt(best)} · 再试一次突破记录。`;$('mainBtn').textContent='再次挑战 →';audioUpdate();}
+function finish(){run=false;completed=true;document.body.classList.remove('playing');$('panel').classList.remove('hide');let best;try{best=Number(localStorage.getItem('apex_drift_best')||0);if(!best||clock<best){best=clock;localStorage.setItem('apex_drift_best',clock)}}catch(e){best=clock} $('panelDesc').innerHTML=`🏁 <strong>${ai.finishTime&&ai.finishTime<clock?'获得第 2 名，再挑战！':'击败 AI 对手，获得第 1 名！'}</strong><br>你的成绩：${fmt(clock)} · 对手：${ai.finishTime?fmt(ai.finishTime):'尚未冲线'}<br>漂移分数：${Math.round(points).toLocaleString()} · 个人最快：${fmt(best)}`;$('mainBtn').textContent='再次挑战 →';audioUpdate();}
 let last=0;function frame(t){let dt=Math.min(.037,(t-last)/1000||.016);last=t;physics(dt);draw();requestAnimationFrame(frame);}requestAnimationFrame(frame);
 function audioInit(){try{if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();engine=audioCtx.createOscillator();engine.type='sawtooth';filter=audioCtx.createBiquadFilter();filter.type='lowpass';gain=audioCtx.createGain();gain.gain.value=0;engine.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);engine.start();}audioCtx.resume();}catch(e){soundEnabled=false;}}
 function audioUpdate(){if(!audioCtx||!gain)return;let t=audioCtx.currentTime;engine.frequency.setTargetAtTime(43+car.v*2.0+(car.drifting?6:0),t,.10);filter.frequency.setTargetAtTime(170+car.v*11,t,.12);gain.gain.setTargetAtTime(soundEnabled&&run&&!paused?.032:0,t,.13);}
