@@ -1,0 +1,291 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#17242a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="screen-orientation" content="landscape"><title>极速漂移 PRO · 横屏写实山道</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08151c;font-family:system-ui,-apple-system,"PingFang SC",sans-serif;color:#fff;touch-action:none}button{font-family:inherit;cursor:pointer}#world{position:fixed;inset:0;background:radial-gradient(circle at 78% 24%,#ffe8b6 0,#ddc2a3 13%,transparent 43%),linear-gradient(#527a94 0%,#8fb6be 52%,#b6c5b8 68%,#5f9486 100%)}#gl{width:100%;height:100%;display:block}#shade{position:fixed;inset:0;pointer-events:none;background:linear-gradient(90deg,#00111b75,transparent 24%,transparent 75%,#00172356),linear-gradient(0deg,#030e15b5,transparent 24%,transparent 85%,#18323d28)}#speedfx{position:fixed;inset:0;opacity:0;pointer-events:none;background:repeating-conic-gradient(from -8deg at 50% 80%,transparent 0deg 11deg,#f3fcff22 11.3deg,transparent 12deg 24deg);mask-image:radial-gradient(ellipse at 50% 79%,transparent 0%,transparent 30%,#000 90%)}
+#ui{position:fixed;inset:0;pointer-events:none}.hud{position:absolute;left:18px;right:18px;top:calc(13px + env(safe-area-inset-top));display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.logo{font-size:12px;font-weight:1000;letter-spacing:2.3px;font-style:italic;text-shadow:0 2px 9px #000b}.logo span{color:#83ffcb}.micro{font-size:9px;letter-spacing:2px;opacity:.72;margin-top:4px}.topBtns{display:flex;gap:7px;pointer-events:auto}.topBtns button{width:39px;height:39px;background:#071b24a6;color:white;border:1px solid #c7e4e85e;border-radius:12px;font-size:16px;backdrop-filter:blur(6px)}
+#metrics{position:absolute;left:18px;top:calc(70px + env(safe-area-inset-top));filter:drop-shadow(0 3px 8px #0008);opacity:0;transition:opacity .2s}#metrics .label{font-size:10px;font-weight:800;letter-spacing:2px;color:#c4ecdd}#speedNum{font-size:clamp(42px,11vw,69px);line-height:1;font-weight:1000;font-style:italic;letter-spacing:-3px;font-variant-numeric:tabular-nums}#metrics .unit{font-size:12px;font-weight:900;color:#e3eee9a3;letter-spacing:1px}.speedRow{display:flex;gap:8px;align-items:baseline}#score{font-size:17px;font-weight:950;color:#e1ffdc;margin-top:8px}#driftCombo{font-size:12px;font-weight:800;color:#93f7cd;margin-top:5px;height:18px}
+#rightHud{position:absolute;right:18px;top:calc(67px + env(safe-area-inset-top));opacity:0;transition:opacity .2s;text-align:right}#mini{width:126px;height:108px;border-radius:15px;background:#05141b80;border:1px solid #ecfff444;box-shadow:0 6px 25px #0618236b}#rightHud .miniName{margin:6px 4px 0;font-size:11px;font-weight:800;letter-spacing:1px}#rightHud .miniTime{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:3px}
+#progress{position:absolute;left:18px;right:18px;top:calc(206px + env(safe-area-inset-top));height:3px;border-radius:6px;background:#c7ebe955;opacity:0}#progressbar{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#75ffd8,#fff7b2);box-shadow:0 0 15px #7fffd9}#info{position:absolute;top:calc(217px + env(safe-area-inset-top));left:18px;font-size:10px;letter-spacing:1px;color:#d9f3e7c9;opacity:0}
+#controls{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom));left:14px;right:14px;display:flex;justify-content:space-between;align-items:end;gap:12px;opacity:0;transition:opacity .2s}.steerZone{display:flex;gap:12px;pointer-events:auto}.steerBtn{width:clamp(62px,15vw,90px);height:clamp(62px,15vw,90px);border-radius:19px;border:1px solid #f2fff583;background:linear-gradient(145deg,#335b68b8,#081a25c7);color:white;font-size:32px;font-weight:700;backdrop-filter:blur(7px);box-shadow:inset 0 1px #ffffff31,0 7px 20px #0005}.steerBtn.on,.steerBtn:active{background:#6fbe9acc;box-shadow:0 0 20px #85fad279}.actZone{display:flex;align-items:end;gap:9px;pointer-events:auto}.brakeBtn{width:clamp(57px,12vw,74px);height:clamp(61px,14vw,76px);border-radius:17px;border:1px solid #ffffff7b;background:#152732a8;color:#e8ffff;font-size:12px;font-weight:900;letter-spacing:1px}.driftBtn{height:clamp(76px,19vw,110px);width:clamp(92px,24vw,128px);border-radius:26px;border:2px solid #e4fff0;background:linear-gradient(145deg,#62dbc1,#178472 72%,#0a4b50);color:#fff;box-shadow:0 0 0 5px #8cebc62b,0 8px 28px #0009;font-size:19px;font-weight:1000;font-style:italic;letter-spacing:1px;text-shadow:0 2px 5px #095448}.driftBtn small{display:block;font-size:10px;font-style:normal;letter-spacing:2px;margin-top:4px}.driftBtn.on,.driftBtn:active{filter:brightness(1.4);transform:scale(.97)}
+#tiltPanel{position:absolute;left:50%;bottom:calc(105px + env(safe-area-inset-bottom));transform:translateX(-50%);padding:7px 13px;border-radius:40px;background:#071922bd;border:1px solid #dcfff455;display:flex;align-items:center;gap:8px;pointer-events:auto;font-size:11px;white-space:nowrap;opacity:0}#tiltPanel button{color:#9bffdc;background:none;border:0;font-size:11px;font-weight:900;padding:2px 3px}#tiltTrack{width:48px;height:5px;border-radius:4px;background:#ffffff30;position:relative}#tiltDot{width:11px;height:11px;position:absolute;top:-3px;left:19px;background:#78f7c7;border-radius:50%;box-shadow:0 0 8px #a2ffcc}
+#toast{position:absolute;top:32%;left:50%;transform:translate(-50%,-50%) scale(.9);white-space:nowrap;font-size:clamp(25px,7vw,54px);font-weight:1000;font-style:italic;color:#adffe0;text-shadow:0 3px 15px #00131b,0 0 22px #153f47;opacity:0;transition:opacity .2s,transform .2s}#notice{position:absolute;bottom:calc(122px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;color:#ebfff3e8;text-shadow:0 2px 7px #001b24;opacity:0;transition:opacity .2s}
+#panel{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:linear-gradient(180deg,#061a2145,#07121d55 37%,#07131cde 100%);pointer-events:auto;z-index:5}#panel.hide{display:none}.sheet{width:min(465px,100%);border-radius:24px;background:linear-gradient(145deg,#061b25eb,#102c35e9);border:1px solid #c0e2d34f;box-shadow:0 15px 90px #000c,inset 0 1px #ffffff28;backdrop-filter:blur(15px);padding:clamp(18px,4vw,30px);text-align:center}.kicker{color:#8cf3c8;font-size:11px;font-weight:900;letter-spacing:4px}.big{font-size:clamp(42px,10vw,60px);font-style:italic;font-weight:1000;letter-spacing:-2px;line-height:1.08;margin:10px 0 2px}.big b{color:#90ffd3}.en{font-weight:900;font-size:13px;letter-spacing:5px;color:#d6e9e4;margin-bottom:18px}.desc{color:#d0e3e2;font-size:13px;line-height:1.95;margin-bottom:16px}#mainBtn{width:100%;height:52px;border:none;border-radius:13px;background:linear-gradient(110deg,#76edbd,#d3ffe5 50%,#6fd8bd);color:#06302f;font-size:17px;font-weight:1000;letter-spacing:2px;box-shadow:0 7px 26px #80f5cc47}#gyroStart{margin-top:13px;display:flex;justify-content:center;align-items:center;gap:7px;color:#e6fff4;font-size:12px;cursor:pointer}#gyroStart input{accent-color:#89f5c9;width:17px;height:17px}.help{font-size:11px;line-height:1.7;color:#add0c6;margin-top:13px}.keycap{display:inline-block;border:1px solid #d9f8ee55;border-radius:6px;padding:1px 6px;margin:0 2px;background:#ffffff12}#unsupported{display:none;position:fixed;inset:0;z-index:20;background:#051620;align-items:center;justify-content:center;padding:20px;text-align:center;line-height:1.8}
+.playing #metrics,.playing #rightHud,.playing #progress,.playing #info,.playing #controls,.playing #tiltPanel{opacity:1}
+@media (orientation:landscape) and (max-height:500px){#metrics{top:calc(49px + env(safe-area-inset-top))}#speedNum{font-size:clamp(38px,6vw,56px)}#rightHud{top:calc(55px + env(safe-area-inset-top))}#mini{width:120px;height:91px}#progress{top:calc(155px + env(safe-area-inset-top))}#info{top:calc(163px + env(safe-area-inset-top))}#tiltPanel{bottom:calc(10px + env(safe-area-inset-bottom));left:50%}.steerBtn{width:72px;height:72px}.driftBtn{width:110px;height:83px}.brakeBtn{height:60px}.sheet{max-width:550px;padding:14px 24px}.big{font-size:40px;margin:5px 0}.en{margin-bottom:8px}.desc{margin-bottom:8px}.help{margin-top:8px}#mainBtn{height:43px}#notice{bottom:100px}}@media (orientation:portrait){#rightHud{top:calc(75px + env(safe-area-inset-top))}#mini{width:100px;height:95px}#progress{top:calc(192px + env(safe-area-inset-top))}#info{top:calc(201px + env(safe-area-inset-top))}#tiltPanel{bottom:calc(125px + env(safe-area-inset-bottom))}.steerBtn{width:64px;height:70px}.driftBtn{width:95px;height:87px}.brakeBtn{width:57px;height:64px}}
+
+/* Real landscape layout: rotate the *entire application* when the OS refuses screen orientation lock. */
+#landscapeApp{position:fixed;left:0;top:0;width:100vw;height:100dvh;overflow:hidden;background:#2d4350;isolation:isolate}
+#world{background:radial-gradient(circle at 72% 26%,#fff3d4 0%,#d8d9c8 8%,transparent 29%),linear-gradient(180deg,#759db1 0%,#b4c6c4 42%,#d2d0b8 58%,#81928a 81%,#566a5d 100%)}
+#shade{background:linear-gradient(0deg,#0d141d99,transparent 26%),linear-gradient(90deg,#09171f82,transparent 21%,transparent 78%,#101a2394),radial-gradient(ellipse at 50% 54%,transparent 27%,#16283230 100%)}
+#speedfx{background:repeating-conic-gradient(from -9deg at 50% 81%,transparent 0deg 11deg,#ffffff29 11.4deg,transparent 12deg 24deg)}
+.hud{left:max(18px,env(safe-area-inset-left));right:max(18px,env(safe-area-inset-right));top:calc(10px + env(safe-area-inset-top))}
+.logo{font-size:12px;letter-spacing:2px}.logo span{color:#ffc58c}.logo sup{font-size:8px;vertical-align:top;color:#ffe4bd}.micro{font-size:8px;color:#d7e0de}
+.topBtns button{width:35px;height:35px;border-radius:9px;background:#0b19229c;border:1px solid #ffffff52;box-shadow:0 2px 9px #0003}
+#metrics{left:max(18px,env(safe-area-inset-left));top:calc(52px + env(safe-area-inset-top))}#speedNum{font-size:clamp(40px,5.5vw,66px);font-style:normal;letter-spacing:-2px;text-shadow:0 2px 5px #000a}#metrics .label{color:#f1e2ce;letter-spacing:1.5px;font-size:9px}#score{font-size:15px;color:#f5c99e;margin-top:4px}#driftCombo{color:#ffd89b}
+#rightHud{right:max(17px,env(safe-area-inset-right));top:calc(53px + env(safe-area-inset-top))}#mini{width:116px;height:92px;background:#08151c9c;border:1px solid #ffffff5d;border-radius:10px}.miniName{font-size:10px!important;color:#e5e5df}.miniTime{font-size:12px!important}
+#progress{top:calc(154px + env(safe-area-inset-top));left:max(18px,env(safe-area-inset-left));width:175px;right:auto;height:3px;background:#ffffff50}#progressbar{background:linear-gradient(90deg,#d57c45,#ffd5a5);box-shadow:0 0 9px #eeb181}#info{top:calc(162px + env(safe-area-inset-top));left:max(18px,env(safe-area-inset-left))}
+#controls{left:calc(16px + env(safe-area-inset-left));right:calc(16px + env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));gap:7px}.steerZone{gap:10px}.steerBtn{width:clamp(67px,9vw,88px);height:clamp(67px,9vw,82px);font-size:28px;border-radius:17px;background:linear-gradient(155deg,#32464e9c,#14222cc9);border:1px solid #d5e1e17d}.brakeBtn{width:66px;height:64px;border-radius:15px;background:#281e1cb6}.driftBtn{width:118px;height:82px;border-radius:22px;border:1px solid #ffdaaa;background:linear-gradient(145deg,#ffc18e,#bd6139 72%,#713d35);color:#26160f;text-shadow:none;box-shadow:0 0 0 4px #e7a47823,0 7px 28px #000b;font-size:18px}.driftBtn small{color:#402216}.driftBtn.on,.driftBtn:active{filter:brightness(1.18)}
+#tiltPanel{bottom:calc(10px + env(safe-area-inset-bottom));padding:7px 11px;border-radius:9px;background:#0c161eb9;font-size:10px;border:1px solid #bfcbd066}#tiltPanel button{color:#ffd5ae;font-size:10px}#tiltDot{background:#ffc08a;box-shadow:0 0 7px #ffd4ac}
+#panel{padding:8px 16px;background:linear-gradient(180deg,#19262b66,#09121cd6)}.sheet{width:min(520px,94%);max-height:calc(100% - 10px);overflow:auto;border-radius:16px;background:linear-gradient(145deg,#10232adf,#18252add);border:1px solid #cbb9a26c;padding:14px 24px;box-shadow:0 22px 80px #000c}.kicker{font-size:10px;letter-spacing:3px;color:#ffc58c}.big{font-size:clamp(35px,5.2vw,48px);margin:5px 0 1px}.big b{color:#ffc48a}.big small{font-size:13px;color:#f2e9e0;vertical-align:top}.en{font-size:10px;letter-spacing:4px;margin-bottom:9px}.desc{font-size:12px;line-height:1.55;margin-bottom:10px}#mainBtn{height:44px;border-radius:10px;background:linear-gradient(110deg,#e2a16e,#f8dbb9 52%,#dc9b6c);color:#2c1b13;font-size:14px;box-shadow:0 5px 22px #e3a57237}#gyroStart{margin-top:9px}.help{margin-top:7px;font-size:10px;line-height:1.45}#toast{color:#ffe0ab;text-shadow:0 2px 13px #000,0 0 22px #a25a29}
+@media (orientation:landscape) and (max-height:510px){.sheet{padding:10px 19px}.big{font-size:37px}.en{margin-bottom:5px}.desc{margin-bottom:7px}.help{margin-top:5px}#mainBtn{height:38px}#gyroStart{margin-top:7px}.steerBtn{width:73px;height:71px}.brakeBtn{height:61px}.driftBtn{height:79px}}
+@media (orientation:portrait){
+  #landscapeApp{left:100vw;top:0;width:100dvh;height:100vw;transform:rotate(90deg);transform-origin:top left}
+  .hud{top:7px;left:18px;right:18px}.topBtns button{width:32px;height:32px}
+  #metrics{top:44px;left:18px}#speedNum{font-size:44px}#rightHud{right:16px;top:45px}#mini{width:110px;height:87px}
+  #progress{top:143px;left:18px;width:168px}#info{top:150px;left:18px}
+  #controls{bottom:9px;left:18px;right:18px}.steerBtn{width:70px;height:67px}.brakeBtn{height:59px;width:61px}.driftBtn{width:110px;height:75px}
+  #tiltPanel{bottom:9px;left:50%}#notice{bottom:95px}
+  .sheet{width:min(480px,92%);padding:10px 18px;max-height:calc(100% - 8px)}.big{font-size:34px}.en{margin-bottom:5px}.desc{font-size:11px;line-height:1.38;margin-bottom:7px}#mainBtn{height:38px}#gyroStart{margin-top:6px;font-size:11px}.help{margin-top:5px;font-size:9px;line-height:1.3}
+}
+@media (prefers-reduced-motion: reduce){#speedfx{display:none}}
+</style></head><body><div id="landscapeApp"><div id="world"><canvas id="gl"></canvas></div><div id="shade"></div><div id="speedfx"></div><div id="ui">
+<div class="hud"><div><div class="logo">APEX <span>DRIFT</span><sup> PRO</sup></div><div class="micro">MOUNTAIN PASS / TIME ATTACK</div></div><div class="topBtns"><button id="rotate" aria-label="切换横屏" title="横屏 / 全屏">⤢</button><button id="sound" aria-label="声音">♫</button><button id="pause" aria-label="暂停">Ⅱ</button></div></div>
+<div id="metrics"><div class="label">SPEED</div><div class="speedRow"><span id="speedNum">000</span><span class="unit">KM/H</span></div><div class="label">DRIFT POINTS</div><div id="score">000000</div><div id="driftCombo"></div></div>
+<div id="rightHud"><canvas id="mini" width="252" height="216"></canvas><div class="miniName">鹰峰山道 · 复杂弯道</div><div class="miniTime" id="time">00:00.0</div></div>
+<div id="progress"><div id="progressbar"></div></div><div id="info">赛段 1 / 3 · 0 / 3600 M</div>
+<div id="toast">PERFECT DRIFT!</div><div id="notice"></div>
+<div id="tiltPanel"><span id="tiltLabel">触屏转向</span><div id="tiltTrack"><span id="tiltDot"></span></div><button id="calibrate">重力校准</button><button id="tiltMode">关重力</button><button id="flip">反向</button></div>
+<div id="controls"><div class="steerZone"><button id="left" class="steerBtn" aria-label="左转">❮</button><button id="right" class="steerBtn" aria-label="右转">❯</button></div><div class="actZone"><button id="brake" class="brakeBtn">刹车</button><button id="drift" class="driftBtn">DRIFT<small>长按漂移</small></button></div></div>
+<div id="panel"><div class="sheet"><div class="kicker">LANDSCAPE DRIFT / MOUNTAIN PASS</div><div class="big">极速<b>漂移</b><small> PRO</small></div><div class="en">APEX DRIFT</div><div class="desc" id="panelDesc">单车山道计时挑战 · <strong>横屏驾驶</strong>。<br>发夹弯 / 连续 S 弯 / 陡坡 / 侧滑漂移。<br>倾斜手机转向 · 入弯轻刹 · 长按 DRIFT 甩尾。</div><button id="mainBtn">开始山道挑战 →</button><label id="gyroStart"><input id="gyroCheck" type="checkbox" checked> 优先使用手机重力感应（首次需授权）</label><div class="help"><span class="keycap">手机倾斜</span>转向　<span class="keycap">DRIFT</span>漂移　<span class="keycap">刹车</span>控速<br>画面始终横屏 · 优先请求系统横屏 / 全屏 · 无陀螺仪可用左右按钮 · 离线运行</div></div></div>
+<div id="unsupported">当前浏览器无法创建 WebGL 3D 画面。建议使用较新的 Chrome / Safari 并开启硬件加速。</div>
+</div></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), canvas=$('gl');
+const gl=canvas.getContext('webgl',{antialias:true,alpha:true,depth:true,powerPreference:'high-performance'})||canvas.getContext('experimental-webgl');
+if(!gl){$('unsupported').style.display='flex';return;}
+const vs=`attribute vec3 p;attribute vec3 n;attribute vec3 c;attribute float k;
+uniform mat4 mvp;uniform vec3 eye;varying vec3 vCol,vPos,vNor,vView;varying float vFog,vKind;
+void main(){gl_Position=mvp*vec4(p,1.0);vPos=p;vNor=normalize(n);vCol=c;vKind=k;vView=eye-p;
+float dist=distance(p,eye);vFog=clamp(1.0-exp(-max(0.0,dist-42.0)*0.0048),0.0,.88);}`;
+const fs=`precision highp float;varying vec3 vCol,vPos,vNor,vView;varying float vFog,vKind;
+float hash21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+void main(){vec3 n=normalize(vNor),eye=normalize(vView),sun=normalize(vec3(-.56,.88,.40));
+float diffuse=max(dot(n,sun),0.0);float sky=max(n.y,0.0);float lighting=.34 + diffuse*.54 + sky*.19;
+vec3 col=vCol*lighting;float h=0.0;float spec=pow(max(dot(reflect(-sun,n),eye),0.0),22.0);
+if(vKind>1.5&&vKind<2.5){float grain=hash21(floor(vPos.xz*12.0))*.052+hash21(floor(vPos.xz*3.0))*.037;
+col*=.90+grain+hash21(floor(vPos.xz*.65))*.047;col+=spec*.017;}
+else if(vKind>.5&&vKind<1.5){float metallic=pow(max(dot(reflect(-sun,n),eye),0.0),43.0);float fresnel=pow(1.0-max(dot(n,eye),0.0),2.0);col+=vec3(1.0,.78,.60)*metallic*.42+vec3(.30,.41,.48)*fresnel*.25;}
+else if(vKind>5.5&&vKind<6.5){float fresnel=pow(1.0-max(dot(n,eye),0.0),1.75);col=mix(col,vec3(.48,.67,.73),clamp(.14+.46*fresnel,0.0,.68));col+=vec3(.37,.46,.50)*spec*.38;}
+else if(vKind>4.5&&vKind<5.5){col*=.78+hash21(floor(vPos.xz*1.7))*.31;}
+else if(vKind>2.5&&vKind<3.5){col=vCol*(.81+.13*diffuse)+vCol*.52;}
+else if(vKind>6.5&&vKind<7.5){col*=.76;col+=spec*.08;}
+vec3 fog=vec3(.73,.76,.72);col=mix(col,fog,vFog);
+float alpha=(vKind>3.5&&vKind<4.5)?0.25:1.0;
+gl_FragColor=vec4(pow(max(col,vec3(0.0)),vec3(.94)),alpha);}`;
+function compile(type,src){let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+let program=gl.createProgram();gl.attachShader(program,compile(gl.VERTEX_SHADER,vs));gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+const loc={p:gl.getAttribLocation(program,'p'),n:gl.getAttribLocation(program,'n'),c:gl.getAttribLocation(program,'c'),k:gl.getAttribLocation(program,'k'),mvp:gl.getUniformLocation(program,'mvp'),eye:gl.getUniformLocation(program,'eye')};const vbo=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbo);for(let [at,size,off] of [[loc.p,3,0],[loc.n,3,12],[loc.c,3,24],[loc.k,1,36]]){gl.enableVertexAttribArray(at);gl.vertexAttribPointer(at,size,gl.FLOAT,false,40,off);}gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);let V=[];
+const RAD=Math.PI/180,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),mix=(a,b,t)=>a+(b-a)*t;
+const rgb=(a)=>a.map(x=>x/255),COL={road:rgb([63,65,65]),roadB:rgb([60,62,63]),line:rgb([224,222,208]),grass:rgb([84,97,71]),grass2:rgb([78,96,74]),dirt:rgb([118,101,77]),edge:rgb([100,94,80]),curbRed:rgb([176,65,49]),curbWhite:rgb([207,199,171]),rail:rgb([166,172,167]),railPost:rgb([72,81,82]),wood:rgb([83,73,61]),pine:rgb([32,62,49]),pine2:rgb([42,77,58]),hill:rgb([105,113,105]),hill2:rgb([130,135,124]),car:rgb([194,52,38]),carDark:rgb([101,28,28]),carLight:rgb([244,122,77]),glass:rgb([24,34,43]),glass2:rgb([45,63,75]),wheel:rgb([20,21,23]),rim:rgb([112,120,125]),light:rgb([248,237,197]),tail:rgb([250,48,36]),mark:rgb([26,28,29]),arch:rgb([48,56,61])};
+function rand(i){let r=Math.sin(i*127.1+71.2)*43758.5453;return r-Math.floor(r)}
+function vertex(p,n,c,k){V.push(...p,...n,...c,k||0)}
+function tri(a,b,c,col,k=0){let u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]],norm=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],l=Math.hypot(...norm)||1;norm=norm.map(x=>x/l);vertex(a,norm,col,k);vertex(b,norm,col,k);vertex(c,norm,col,k)}
+function quad(a,b,c,d,col,k=0){tri(a,b,c,col,k);tri(a,c,d,col,k)}
+function box(x,y,z,w,h,d,col,k=0){let a=[x-w/2,y,z-d/2],b=[x+w/2,y,z-d/2],c=[x+w/2,y,z+d/2],e=[x-w/2,y,z+d/2],f=[x-w/2,y+h,z-d/2],g=[x+w/2,y+h,z-d/2],h2=[x+w/2,y+h,z+d/2],i=[x-w/2,y+h,z+d/2];quad(f,i,h2,g,col,k);quad(a,b,c,e,col,k);quad(e,c,h2,i,col,k);quad(a,f,g,b,col,k);quad(a,e,i,f,col,k);quad(b,g,h2,c,col,k)}
+function cone(x,y,z,r,h,col,segments=7){let tip=[x,y+h,z];for(let j=0;j<segments;j++){let a=j*2*Math.PI/segments,b=(j+1)*2*Math.PI/segments;tri([x+r*Math.cos(a),y,z+r*Math.sin(a)],tip,[x+r*Math.cos(b),y,z+r*Math.sin(b)],j%3?col:col.map(v=>v*.83));}}
+// Physical centerline with actual 3D switchbacks, hairpins, and elevation changes.
+const GOAL=3600,STEP=3,path=[];
+const turns=[[140,490,.0045],[535,840,-.0070],[865,1090,.0100],[1130,1400,-.0086],[1465,1690,.0121],[1760,2000,-.0105],[2050,2280,.0113],[2360,2690,-.0067],[2740,2920,.0114],[3000,3330,-.0092],[3380,3550,.0047]];
+function ease(a,b,x){let v=clamp((x-a)/(b-a),0,1);return v*v*(3-2*v)}
+function kappa(s){let k=0;for(const [a,b,c] of turns)k+=c*ease(a,a+30,s)*(1-ease(b-30,b,s));return k;}
+function heightAt(s){return 3.1*Math.sin(s*.0061)+1.6*Math.sin(s*.0128)+.0018*s;}
+let px=0,pz=0,heading=0;for(let s=0;s<=GOAL+180;s+=STEP){let k=kappa(s);heading+=k*STEP;px+=Math.sin(heading)*STEP;pz+=Math.cos(heading)*STEP;path.push({s,x:px,z:pz,y:heightAt(s),a:heading,k});}
+function pathAt(s){if(s<0){let o=path[0];return {s,x:o.x+Math.sin(o.a)*s,z:o.z+Math.cos(o.a)*s,y:o.y+s*.003,a:o.a,k:0};}s=clamp(s,0,GOAL+170);let i=Math.floor(s/STEP),t=(s-i*STEP)/STEP,a=path[Math.min(i,path.length-1)],b=path[Math.min(i+1,path.length-1)];return {s,x:mix(a.x,b.x,t),z:mix(a.z,b.z,t),y:mix(a.y,b.y,t),a:mix(a.a,b.a,t),k:mix(a.k,b.k,t)};}
+function pos(s,side=0,height=0){let p=pathAt(s);return [p.x+Math.cos(p.a)*side,p.y+height,p.z-Math.sin(p.a)*side];}
+function segment(s0,s1,x0,x1,h,col,k=0){quad(pos(s0,x0,h),pos(s1,x0,h),pos(s1,x1,h),pos(s0,x1,h),col,k);}
+function tower(x,z,y,seed){let ht=(5+rand(seed)*4);box(x,y,z,.4,ht*.36,.41,COL.wood);let scales=[1,.77,.52];for(let j=0;j<3;j++)cone(x,y+.9+j*ht*.22,z,2.1*scales[j],ht*.66,COL[j%2?'pine2':'pine'],7);}
+function shrub(x,y,z,seed){let v=rand(seed);cone(x,y,z,.9+v*.45,1.15+v*.65,v>.5?COL.pine:COL.pine2,6);cone(x-.55,y-.1,z+.12,.75,.9,COL.pine,5);}
+function rock(x,y,z,scale,seed){let c=rand(seed)>.5?COL.hill:COL.hill2;let a=[x,y,z],b=[x+scale*1.5,y,z+scale*.2],d=[x+scale*.15,y,z-scale*1.1],tip=[x+scale*.16,y+scale*(.8+rand(seed+4)),z];tri(a,b,tip,c);tri(b,d,tip,c.map(t=>t*.78));tri(d,a,tip,c);}
+function trackGeometry(){let begin=Math.max(-54,Math.floor((car.s-35)/9)*9),end=Math.min(GOAL+120,car.s+420);for(let s=begin;s<end;s+=9){let n=Math.min(s+9,end),c=Math.floor(s/9)%3;
+  segment(s,n,-6.4,6.4,.055,c===0?COL.roadB:COL.road,2);segment(s,n,-7.15,-6.4,.035,Math.floor(s/14)%2?COL.curbWhite:COL.curbRed);segment(s,n,6.4,7.15,.035,Math.floor(s/14)%2?COL.curbRed:COL.curbWhite);
+  segment(s,n,-8.65,-7.15,.005,COL.edge,5);segment(s,n,7.15,8.65,.005,COL.edge,5);
+  segment(s,n,-45,-8.65,-.42,c%2?COL.grass:COL.grass2,5);segment(s,n,8.65,45,-.42,c%2?COL.grass2:COL.grass,5);
+  segment(s,n,-6.15,-6.07,.065,COL.line);segment(s,n,6.07,6.15,.065,COL.line);
+  if(Math.floor(s/16)%3!==1)segment(s,n,-.08,.08,.067,[.52,.55,.52]);
+  if(Math.floor(s/18)%5===2){segment(s,n,-3.72,-3.57,.057,[.16,.16,.16],2);segment(s,n,3.57,3.72,.057,[.16,.16,.16],2);}
+  // Subtle darker wheel-worn tracks and rough center patches.
+  segment(s,n,-2.55,-2.22,.059,[.215,.224,.223],2);segment(s,n,2.22,2.55,.059,[.215,.224,.223],2);
+  if(Math.floor(s/9)%4===0){let o=rand(s+9)*3;segment(s,n,-5+o,-4.3+o,.058,[.235,.239,.232],2);}
+  if(Math.floor(s/9)%11===0){segment(s,n,-6.7,-6.57,.077,COL.curbWhite);segment(s,n,6.57,6.7,.077,COL.curbWhite);}
+ }
+ // Guardrails, clear reflector posts and retaining walls at turns.
+ for(let i=Math.floor((car.s-35)/15);i*15<end;i++){let s=i*15;if(s<-54)continue;for(const side of [-1,1]){let c=pos(s,side*9.05,0);box(c[0],c[1]-.15,c[2],.16,1.17,.16,COL.railPost);let a=pos(s,side*9.05,.79),b=pos(s+15,side*9.05,.79);let dx=b[0]-a[0],dz=b[2]-a[2],ang=Math.atan2(dx,dz);orientedBox((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,.17,.24,Math.hypot(dx,dz)+.7,COL.rail,ang);
+let lowA=pos(s,side*9.05,.37),lowB=pos(s+15,side*9.05,.37);orientedBox((lowA[0]+lowB[0])/2,(lowA[1]+lowB[1])/2,(lowA[2]+lowB[2])/2,.09,.09,Math.hypot(dx,dz)+.7,[.41,.44,.43],ang);let reflector=pos(s,side*8.95,.82);box(reflector[0],reflector[1],reflector[2],.22,.18,.12,side>0?[.92,.38,.26]:[.98,.85,.55],3);}}
+ // roadside trees, boulders and pale mountain masses
+ for(let i=Math.floor((car.s-50)/24);i*24<end;i++){let s=i*24+5;if(s<0)continue;for(let side of [-1,1]){let seed=i*31+side*7;let offset=11+rand(seed+2)*25;let p=pos(s+rand(seed)*11,side*offset,-.45);if(rand(seed+3)>.25)tower(p[0],p[2],p[1],seed);if(rand(seed+4)>.67)rock(p[0]+side*2,p[1],p[2]+4,1.2+rand(seed)*2,seed);if(rand(seed+5)>.65){let f=pos(s,side*(34+rand(seed+8)*20),-.7);tower(f[0],f[2],f[1],seed+28);}
+  if(rand(seed+6)>.56){let f=pos(s+7,side*(11+rand(seed+6)*13),-.40);shrub(f[0],f[1],f[2],seed);}
+  if(rand(seed+9)>.83){let f=pos(s+9,side*(18+rand(seed+10)*13),-.54);rock(f[0],f[1],f[2],2.7+rand(seed+11)*3,seed+12);}}}
+ // Sector arches: green illuminated pylons. One final line.
+ for(let s=Math.max(180,Math.floor((car.s-40)/75)*75);s<end;s+=75){
+   let curv=Math.abs(kappa(s+24));if(curv<.0068||s<car.s-30)continue;
+   let side=kappa(s+24)>0?-1:1,p=pos(s,side*10.4,.47),a=pathAt(s).a;
+   orientedBox(p[0],p[1],p[2],.24,1.5,.24,COL.railPost,a);
+   let sign=pos(s,side*10.42,1.83);orientedBox(sign[0],sign[1],sign[2],2.6,1.25,.1,[.91,.72,.22],a);
+   for(let m=-1;m<=1;m++){let q=pos(s,side*10.38,2.18+m*.35);orientedBox(q[0],q[1],q[2],1.85,.105,.15,[.10,.13,.12],a);}
+ }
+ for(const s of [900,2100,GOAL]){if(s<car.s-35||s>end)continue;let p=pathAt(s),a=pos(s,-9.0,-.2),b=pos(s,9.0,-.2),col=s===GOAL?[.83,.89,.80]:[.12,.61,.51];orientedBox(a[0],a[1],a[2],.5,5.8,.55,col,p.a);orientedBox(b[0],b[1],b[2],.5,5.8,.55,col,p.a);let mid=pos(s,0,5.35);orientedBox(mid[0],mid[1],mid[2],18.6,.55,.63,COL.arch,p.a);let bar=pos(s,0,5.18);orientedBox(bar[0],bar[1],bar[2],12.8,.12,.70,[.41,.96,.73],p.a,3);
+ if(s===GOAL){for(let x=-6;x<6;x+=1.8){let p=pos(s,x,.077);orientedBox(p[0],p[1],p[2],1.8,.017,1.6,x%3?[.9,.91,.83]:[.10,.14,.14],pathAt(s).a);}}}
+}
+function orientedBox(x,y,z,w,h,d,col,angle,k=0){let c=Math.cos(angle),sn=Math.sin(angle),t=(lx,ly,lz)=>[x+lx*c+lz*sn,y+ly,z+lz*c-lx*sn];let a=t(-w/2,0,-d/2),b=t(w/2,0,-d/2),cc=t(w/2,0,d/2),e=t(-w/2,0,d/2),f=t(-w/2,h,-d/2),g=t(w/2,h,-d/2),hh=t(w/2,h,d/2),ii=t(-w/2,h,d/2);quad(f,ii,hh,g,col,k);quad(a,b,cc,e,col,k);quad(e,cc,hh,ii,col,k);quad(a,f,g,b,col,k);quad(a,e,ii,f,col,k);quad(b,g,hh,cc,col,k)}
+// A low, wide rear-engined coupe with hood, cockpit, wings and cylindrical wheels.
+let carSpin=0,skidMarks=[],skidPrev=null,smoke=[],smokeTimer=0;
+function wheelAt(cx,y,cz,side,ang){let xx=cx+side*.16,N=11,r=.49,w=.37;for(let i=0;i<N;i++){let t=i*Math.PI*2/N,u=(i+1)*Math.PI*2/N;let a=[xx-w/2,y+Math.sin(t)*r,cz+Math.cos(t)*r],b=[xx-w/2,y+Math.sin(u)*r,cz+Math.cos(u)*r],c=[xx+w/2,y+Math.sin(u)*r,cz+Math.cos(u)*r],d=[xx+w/2,y+Math.sin(t)*r,cz+Math.cos(t)*r];quad(T(...a),T(...b),T(...c),T(...d),COL.wheel);let mid=[xx+side*w/2,y,cz],ra=.27;tri(T(...mid),T(xx+side*w/2,y+ra*Math.sin(t),cz+ra*Math.cos(t)),T(xx+side*w/2,y+ra*Math.sin(u),cz+ra*Math.cos(u)),COL.rim,1);}}
+let ct={x:0,y:0,z:0,a:0};function T(x,y,z){let a=ct.a,c=Math.cos(a),s=Math.sin(a);return [ct.x+x*c+z*s,ct.y+y,ct.z+z*c-x*s]}
+function Cbox(x,y,z,w,h,d,col,k=1){let a=[x-w/2,y,z-d/2],b=[x+w/2,y,z-d/2],cc=[x+w/2,y,z+d/2],e=[x-w/2,y,z+d/2],f=[x-w/2,y+h,z-d/2],g=[x+w/2,y+h,z-d/2],hh=[x+w/2,y+h,z+d/2],ii=[x-w/2,y+h,z+d/2];quad(T(...f),T(...ii),T(...hh),T(...g),col,k);quad(T(...a),T(...b),T(...cc),T(...e),col,k);quad(T(...e),T(...cc),T(...hh),T(...ii),col,k);quad(T(...a),T(...f),T(...g),T(...b),col,k);quad(T(...a),T(...e),T(...ii),T(...f),col,k);quad(T(...b),T(...g),T(...hh),T(...cc),col,k)}
+// Hand-built grand touring car: sculpted panels, tapered cockpit, glass and metallic reflections.
+function Ctri(a,b,c,col,k=1){tri(T(...a),T(...b),T(...c),col,k)}
+function Cquad(a,b,c,d,col,k=1){quad(T(...a),T(...b),T(...c),T(...d),col,k)}
+function wheelDetailed(x,z,side){const R=.48,hub=.26,N=15,half=.22;
+ for(let i=0;i<N;i++){let a=i*2*Math.PI/N+carSpin,b=(i+1)*2*Math.PI/N+carSpin,ring=t=>[Math.sin(t)*R,Math.cos(t)*R],a0=ring(a),b0=ring(b);
+ let xx=x;Cquad([xx-half,a0[1]+.51,z+a0[0]],[xx+half,a0[1]+.51,z+a0[0]],[xx+half,b0[1]+.51,z+b0[0]],[xx-half,b0[1]+.51,z+b0[0]],COL.wheel,7);
+ let out=x+side*.235;
+ Ctri([out,.51,z],[out,.51+a0[1]*.36,z+a0[0]*.36],[out,.51+b0[1]*.36,z+b0[0]*.36],[.19,.20,.21],7);
+ if(i%3===0){Ctri([out+side*.012,.51,z],[out+side*.017,.51+a0[1]*.73,z+a0[0]*.73],[out+side*.017,.51+b0[1]*.73,z+b0[0]*.73],[.49,.53,.55],1);}
+ }
+ Cquad([x+side*.24,.43,z-.08],[x+side*.25,.43,z+.08],[x+side*.25,.59,z+.08],[x+side*.24,.59,z-.08],[.70,.74,.74],1);
+}
+function carModel(){let p=pos(car.s,car.x,.092);ct={x:p[0],y:p[1]+(car.offroad?.07:0),z:p[2],a:pathAt(car.s).a+car.yaw};
+ // 2-layer ambient shadow under car, shown on asphalt rather than floating car.
+ for(let j=0;j<2;j++){let r=j===0?1.53:1.22,zr=j===0?2.55:2.14;
+ for(let i=0;i<16;i++){let a=i*2*Math.PI/16,b=(i+1)*2*Math.PI/16;
+ Ctri([0,-.007,-.06],[r*Math.cos(a),-.007,-.06+zr*Math.sin(a)],[r*Math.cos(b),-.007,-.06+zr*Math.sin(b)],j===0?[.18,.19,.18]:[.13,.15,.14],7);
+ }}
+ // Split lower bumper and carbon side sills.
+ Cbox(0,.24,0,2.44,.36,4.50,[.15,.16,.18],7);
+ Cbox(0,.43,-.12,2.46,.36,4.48,COL.carDark);
+ Cquad([-1.18,.56,2.09],[1.18,.56,2.09],[1.25,.67,-1.93],[-1.25,.67,-1.93],COL.car);
+ for(let sg of [-1,1]){
+   Cquad([sg*1.18,.55,2.12],[sg*1.30,.62,1.28],[sg*1.31,.77,-1.47],[sg*1.18,.73,-2.02],COL.carDark);
+   Cquad([sg*.85,.70,1.95],[sg*1.17,.65,1.85],[sg*1.25,.79,-1.45],[sg*.98,.92,-1.35],COL.car);
+   Cquad([sg*1.31,.43,1.07],[sg*1.34,.43,-1.37],[sg*1.20,.31,-1.56],[sg*1.20,.31,1.22],[.15,.16,.17],7);
+ }
+ // Tapered front bonnet with chamfered nose.
+ Cquad([-1.10,.76,1.15],[1.10,.76,1.15],[1.03,.69,2.12],[-1.03,.69,2.12],COL.car,1);
+ Cquad([-.70,.777,1.18],[.70,.777,1.18],[.59,.707,2.04],[-.59,.707,2.04],COL.carLight,1);
+ Cquad([-1.00,.57,2.19],[1.00,.57,2.19],[1.08,.46,2.26],[-1.08,.46,2.26],COL.carDark,7);
+ // Angled windshield, roof, rear glass; cabin is not a simple box.
+ let y1=.82,y2=1.55;let fbl=[-.98,y1,.76],fbr=[.98,y1,.76],ftl=[-.72,y2,.05],ftr=[.72,y2,.05];
+ Cquad(fbl,fbr,ftr,ftl,COL.glass2,6);
+ Cquad([-.72,y2,.05],[.72,y2,.05],[.70,y2,-1.05],[-.70,y2,-1.05],COL.carDark,1);
+ Cquad([-.70,y2,-1.05],[.70,y2,-1.05],[1.03,.85,-1.69],[-1.03,.85,-1.69],COL.glass,6);
+ Cquad([-.98,.82,.76],[-.72,1.55,.05],[-.70,1.55,-1.05],[-1.04,.82,-1.60],COL.glass,6);
+ Cquad([.98,.82,.76],[.72,1.55,.05],[.70,1.55,-1.05],[1.04,.82,-1.60],COL.glass,6);
+ // Body colored A-pillars / B-pillars, roof gloss strip and windshield shine.
+ for(let sg of [-1,1]){
+  Cquad([sg*.89,.82,.76],[sg*.98,.82,.76],[sg*.75,1.55,.05],[sg*.68,1.55,.05],COL.car,1);
+  Cquad([sg*.81,.90,-.83],[sg*.92,.90,-.83],[sg*.73,1.55,-.83],[sg*.66,1.55,-.83],COL.carDark,1);
+  Cquad([sg*.76,1.552,.06],[sg*.70,1.56,.06],[sg*.69,1.56,-1.05],[sg*.76,1.552,-1.05],COL.carLight,1);
+  // Rear mirrors: slim stalks and mirror pods.
+  Cbox(sg*1.25,.91,.53,.34,.14,.46,COL.carDark,1);
+ }
+ Cquad([-.59,1.42,.20],[-.54,1.42,.20],[-.78,.94,.62],[-.85,.94,.62],[.53,.64,.68],6);
+ // Engine cover plus vents for mid-engine styling.
+ Cquad([-1.12,.77,-1.62],[1.12,.77,-1.62],[1.15,.72,-2.06],[-1.15,.72,-2.06],COL.car,1);
+ for(let i=0;i<4;i++)Cbox(0,.784,-1.52+i*.125,1.05,.024,.06,[.09,.10,.11],7);
+ // Rear light strips, deep diffuser and twin exhausts.
+ Cbox(0,.27,-2.24,2.07,.16,.16,[.10,.11,.12],7);
+ Cbox(-.76,.58,-2.22,.77,.105,.12,COL.tail,3);Cbox(.76,.58,-2.22,.77,.105,.12,COL.tail,3);
+ Cbox(0,.57,-2.226,.35,.06,.12,[.27,.06,.05],3);
+ Cbox(0,.35,-2.27,1.05,.12,.09,[.09,.10,.12],7);
+ for(let sg of [-1,1]){Cbox(sg*.56,.38,-2.295,.19,.16,.10,[.26,.29,.31],1);Cbox(sg*.56,.41,-2.308,.12,.10,.08,[.045,.05,.06],7);}
+ // Racing rear wing: posts + thin blade and carbon top.
+ Cbox(-.82,.83,-1.92,.105,.52,.10,[.13,.14,.15],7);Cbox(.82,.83,-1.92,.105,.52,.10,[.13,.14,.15],7);
+ Cbox(0,1.30,-2.01,2.76,.105,.50,COL.carDark,1);Cbox(0,1.39,-2.07,2.45,.035,.33,[.17,.18,.19],7);
+ Cbox(-1.31,1.24,-2.02,.07,.29,.51,COL.car,1);Cbox(1.31,1.24,-2.02,.07,.29,.51,COL.car,1);
+ // Front headlamp housings + DRL outlines.
+ for(let sg of [-1,1]){
+ Cquad([sg*.76,.75,2.05],[sg*1.06,.67,1.95],[sg*1.07,.59,2.17],[sg*.70,.64,2.20],[.10,.14,.17],6);
+ Cbox(sg*.89,.689,2.136,.25,.045,.07,COL.light,3);
+ }
+ // Wheel wells and rotating faceted tires with 5-spoke metallic rims.
+ for(let x of [-1.24,1.24]){wheelDetailed(x,1.39,Math.sign(x));wheelDetailed(x,-1.46,Math.sign(x));}
+}
+function skidGeometry(){for(const mark of skidMarks){quad(mark.a,mark.b,mark.c,mark.d,COL.mark);}}
+function smokeGeometry(eye){const dx=car.x||1;let dir=norm([camT[2]-eye[2],0,-(camT[0]-eye[0])]);for(const p of smoke){let r=p.r*(.8+p.age*1.2),y=p.y+p.age*1.65,z=p.z,x=p.x,c=[.58+p.age*.12,.72+p.age*.08,.71+p.age*.07];quad([x-dir[0]*r,y-r*.25,z-dir[2]*r],[x+dir[0]*r,y-r*.25,z+dir[2]*r],[x+dir[0]*r,y+r*1.2,z+dir[2]*r],[x-dir[0]*r,y+r*1.2,z-dir[2]*r],c,4);}}
+function backgrounds(){
+ let p=pos(car.s,0),theta=pathAt(car.s).a,rt=[Math.cos(theta),-Math.sin(theta)],fw=[Math.sin(theta),Math.cos(theta)];
+ function pt(x,z,y){return [p[0]+rt[0]*x+fw[0]*z,p[1]+y,p[2]+rt[1]*x+fw[1]*z];}
+ // Distant Alpine mountain ranges: staggered natural ridges, with atmospheric desaturation.
+ for(let l=2;l>=0;l--){let distance=440+l*205,base=-79-l*14,peak=98+l*37;
+ let hi= (x)=>base+peak+20*Math.sin(x*.006+l*1.51)+14*Math.sin(x*.014-l*.8)+9*Math.sin(x*.033+l*2.41)+5*Math.sin(x*.071-l*1.3);
+ let tone=l===0?[.34,.40,.38]:l===1?[.47,.53,.51]:[.59,.64,.62];
+ for(let j=-22;j<22;j++){let x0=j*35,x1=(j+1)*35,y0=hi(x0),y1=hi(x1),m=(x0+x1)/2;
+ let dark=[tone[0]*.79,tone[1]*.83,tone[2]*.84],light=[tone[0]*1.06,tone[1]*1.055,tone[2]*1.05];
+ let a=pt(x0,distance,base-45),b=pt(x1,distance,base-45),c=pt(x1,distance,y1),d=pt(x0,distance,y0);
+ quad(a,b,c,d,tone);
+ tri(d,c,pt(m,distance-23,(y0+y1)/2-20),j%3===0?dark:light);
+ }
+ }
+} 
+function norm(v){let l=Math.hypot(...v)||1;return v.map(x=>x/l)}function sub(a,b){return a.map((x,i)=>x-b[i])}function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}function dot(a,b){return a.reduce((s,x,i)=>s+x*b[i],0)}
+function lookAt(eye,focus){let z=norm(sub(eye,focus)),x=norm(cross([0,1,0],z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1])}
+function proj(fov,aspect,near,far){let f=1/Math.tan(fov/2),nf=1/(near-far);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)*nf,-1,0,0,2*far*near*nf,0])}
+function mul(a,b){let o=new Float32Array(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++)o[i+j*4]=a[i]*b[j*4]+a[i+4]*b[j*4+1]+a[i+8]*b[j*4+2]+a[i+12]*b[j*4+3];return o;}
+let car={s:0,x:0,yaw:0,yawVel:0,latSlip:0,v:0,drifting:false,offroad:false},run=false,paused=false,completed=false,clock=0,points=0,combo=0,driftTime=0,comboTimer=0,sector=1,flash=0,toastTime=0,noticeTime=0,held={left:false,right:false,drift:false,brake:false},tilt={active:false,available:false,raw:0,zero:0,value:0,reverse:1,requested:false},gyroRead=0,gyroDesired=true,shake=0,camE=null,camT=null,soundEnabled=true,audioCtx,engine,filter,gain;
+const minimap=$('mini'),mapCtx=minimap.getContext('2d');
+function mapDraw(){if(!mapCtx)return;const ctx=mapCtx;let w=minimap.width,h=minimap.height;ctx.clearRect(0,0,w,h);let pts=path.filter((_,i)=>i%8===0),minx=Infinity,maxx=-Infinity,minz=Infinity,maxz=-Infinity;for(const p of pts){minx=Math.min(minx,p.x);maxx=Math.max(maxx,p.x);minz=Math.min(minz,p.z);maxz=Math.max(maxz,p.z);}let k=Math.min((w-26)/(maxx-minx||1),(h-28)/(maxz-minz||1));let f=p=>[13+(p.x-minx)*k,12+(p.z-minz)*k];ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#071a22';ctx.lineWidth=13;ctx.beginPath();pts.forEach((p,i)=>{let [x,y]=f(p);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.strokeStyle='#6eb3a0';ctx.lineWidth=6;ctx.stroke();ctx.strokeStyle='#a9ffe0';ctx.lineWidth=7;ctx.beginPath();let finish=f(pathAt(GOAL));ctx.moveTo(finish[0]-3,finish[1]-3);ctx.lineTo(finish[0]+3,finish[1]+3);ctx.stroke();let p=f(pathAt(car.s));ctx.fillStyle='#fdfbc8';ctx.shadowBlur=12;ctx.shadowColor='#b9ffe6';ctx.beginPath();ctx.arc(p[0],p[1],6,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;}
+function draw(){const w=Math.max(canvas.clientWidth,1),h=Math.max(canvas.clientHeight,1),dpr=Math.min(window.devicePixelRatio||1,w>h?1.45:1.14);let ww=Math.round(w*dpr),hh=Math.round(h*dpr);if(canvas.width!==ww||canvas.height!==hh){canvas.width=ww;canvas.height=hh;gl.viewport(0,0,ww,hh);}gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+ let p=pos(car.s,car.x,1.1),a=pathAt(car.s).a+car.yaw*.3,f=[Math.sin(a),0,Math.cos(a)],r=[Math.cos(a),0,-Math.sin(a)];let look=p.map((v,i)=>v+f[i]*(w>h?20:20));look[1]+=.8;
+ let want=[p[0]-f[0]*(w>h?9.6:12.5)+r[0]*car.latSlip*.016,p[1]+(w>h?3.85:4.7),p[2]-f[2]*(w>h?9.6:12.5)+r[2]*car.latSlip*.016];want[1]+=Math.sin(clock*49)*shake*.1;
+ if(!camE){camE=want.slice();camT=look.slice();}for(let i=0;i<3;i++){camE[i]=mix(camE[i],want[i],.12);camT[i]=mix(camT[i],look[i],.18);}
+ let view=lookAt(camE,camT),mat=mul(proj(((w>h?63:65)+Math.min(6,car.v/9))*RAD,w/h,.18,1000),view);
+ gl.uniformMatrix4fv(loc.mvp,false,mat);gl.uniform3fv(loc.eye,camE);
+ V.length=0;backgrounds();trackGeometry();skidGeometry();carModel();let arr=new Float32Array(V);gl.bindBuffer(gl.ARRAY_BUFFER,vbo);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,arr.length/10);
+ if(smoke.length){V.length=0;smokeGeometry(camE);let sv=new Float32Array(V);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.depthMask(false);gl.bufferData(gl.ARRAY_BUFFER,sv,gl.DYNAMIC_DRAW);gl.drawArrays(gl.TRIANGLES,0,sv.length/10);gl.depthMask(true);gl.disable(gl.BLEND);}
+}
+function reset(){car={s:0,x:0,yaw:0,yawVel:0,latSlip:0,v:7.5,drifting:false,offroad:false};clock=0;points=0;combo=0;driftTime=0;comboTimer=0;sector=1;flash=0;shake=0;toastTime=0;camE=camT=null;skidMarks=[];skidPrev=null;smoke=[];smokeTimer=0;mapDraw();hud();}
+function toast(t){$('toast').textContent=t;$('toast').style.opacity=1;$('toast').style.transform='translate(-50%,-50%) scale(1)';toastTime=1.5;}
+function notice(t){$('notice').textContent=t;$('notice').style.opacity=1;noticeTime=3.2;}
+function hud(){$('speedNum').textContent=String(Math.round(car.v*3.6)).padStart(3,'0');$('score').textContent=Math.round(points).toString().padStart(6,'0');$('driftCombo').textContent=car.drifting&&Math.abs(car.yaw)>.09?`侧滑 ${Math.round(Math.abs(car.yaw)*180/Math.PI)}°  ·  COMBO ×${Math.min(5,1+Math.floor(driftTime/2))}`:'';$('progressbar').style.width=(100*clamp(car.s/GOAL,0,1))+'%';$('info').textContent=`赛段 ${sector} / 3 · ${Math.floor(car.s)} / ${GOAL} M`;$('time').textContent=fmt(clock);$('tiltDot').style.left=(19+tilt.value*18)+'px';$('tiltLabel').textContent=tilt.active?'重力转向':'触屏转向';$('tiltMode').textContent=tilt.active?'关重力':'开重力';}
+function fmt(t){let m=Math.floor(t/60),s=Math.floor(t%60),dec=Math.floor(t%1*10);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${dec}`;}
+function physics(dt){if(!run||paused)return;clock+=dt;
+ let steering=(held.right?1:0)-(held.left?1:0);if(Math.abs(steering)<.5&&tilt.active)steering=tilt.value;
+ let driftHeld=held.drift&&car.v>11;car.drifting=driftHeld;
+ let speedKm=car.v*3.6;let max=driftHeld?40.5:47.5;let accel=held.brake?-23:(car.v<max?7.6-(car.v/max)*4.1:-2.4);if(car.offroad)accel-=13;car.v=clamp(car.v+accel*dt,3.5,51);
+ let curve=pathAt(car.s).k;
+ let targetRate=steering*(driftHeld?1.12:.79)*(.57+.43*clamp(car.v/39,0,1));car.yawVel=mix(car.yawVel,targetRate,1-Math.exp(-dt*(driftHeld?3.1:6.5)));
+ car.yaw+=car.yawVel*dt;let advance=car.v*dt*Math.max(.5,Math.cos(car.yaw));car.yaw-=curve*advance;car.yaw*=Math.exp(-dt*(driftHeld?.19:.60));car.yaw=clamp(car.yaw,-.95,.95);
+ // Lateral tire momentum persists while drifting and is damped on normal grip.
+ let lateralTarget=(Math.sin(car.yaw)*car.v)+(driftHeld?steering*2.6:0);car.latSlip=mix(car.latSlip,lateralTarget,1-Math.exp(-dt*(driftHeld?1.65:5.8)));car.x+=car.latSlip*dt;
+ car.s=Math.min(GOAL,car.s+advance);
+ car.offroad=Math.abs(car.x)>6.65;
+ // Persistent tire tracks plus expanding 3D smoke puffs under a sustained slide.
+ if(driftHeld&&Math.abs(car.yaw)>.065&&!car.offroad){let angle=pathAt(car.s).a+car.yaw;let sideVec=[Math.cos(angle)*.09,0,-Math.sin(angle)*.09],pair=[pos(car.s,car.x-1.15,.073),pos(car.s,car.x+1.15,.073)];if(skidPrev&&car.s-skidPrev.s<5){for(let i=0;i<2;i++){let a=skidPrev.pair[i],b=pair[i],off=sideVec;skidMarks.push({s:car.s,a:[a[0]-off[0],a[1],a[2]-off[2]],b:[a[0]+off[0],a[1],a[2]+off[2]],c:[b[0]+off[0],b[1],b[2]+off[2]],d:[b[0]-off[0],b[1],b[2]-off[2]]});}}skidPrev={s:car.s,pair};smokeTimer-=dt;if(smokeTimer<=0){smokeTimer=.065;for(let i=0;i<2;i++)smoke.push({x:pair[i][0],y:pair[i][1]+.3,z:pair[i][2],age:0,r:.37});}}else skidPrev=null;
+ smoke.forEach(p=>p.age+=dt);smoke=smoke.filter(p=>p.age<1.05).slice(-34);skidMarks=skidMarks.filter(p=>p.s>car.s-220).slice(-340);if(Math.abs(car.x)>8.40){car.x=Math.sign(car.x)*8.40;car.v=Math.max(5,car.v-19*dt);car.latSlip*=-.16;car.yaw*=.78;shake=.65;}
+ if(driftHeld&&Math.abs(car.yaw)>.085&&car.v>13){driftTime+=dt;comboTimer=.85;points+=dt*(75+Math.abs(car.yaw)*290)*Math.min(5,1+Math.floor(driftTime/2));if(driftTime>3.2&&driftTime-dt<=3.2)toast('GREAT DRIFT ×2');}else{comboTimer-=dt;if(comboTimer<=0&&driftTime>0){if(driftTime>.8){let bonus=Math.floor(driftTime*90);points+=bonus;toast('DRIFT BONUS +'+bonus);}driftTime=0;}}
+ if(car.s>=900&&sector===1){sector=2;toast('SECTOR 1 CLEAR');}if(car.s>=2100&&sector===2){sector=3;toast('SECTOR 2 CLEAR');}
+ if(car.s>=GOAL)finish();
+ carSpin+=car.v*dt/.49;shake=Math.max(0,shake-dt*.9);toastTime-=dt;noticeTime-=dt;if(toastTime<=0)$('toast').style.opacity=0;if(noticeTime<=0)$('notice').style.opacity=0;
+ $('speedfx').style.opacity=driftHeld&&Math.abs(car.yaw)>.11?'.32':(car.v>42?'.12':'0');
+ hud();if(Math.floor(clock*6)!==Math.floor((clock-dt)*6))mapDraw();audioUpdate();}
+function finish(){run=false;completed=true;document.body.classList.remove('playing');$('panel').classList.remove('hide');let best;try{best=Number(localStorage.getItem('apex_drift_best')||0);if(!best||clock<best){best=clock;localStorage.setItem('apex_drift_best',clock)}}catch(e){best=clock} $('panelDesc').innerHTML=`🏁 <strong>已完成山道挑战！</strong><br>你的成绩：${fmt(clock)} · 漂移分数：${Math.round(points).toLocaleString()}<br>个人最快：${fmt(best)} · 再试一次突破记录。`;$('mainBtn').textContent='再次挑战 →';audioUpdate();}
+let last=0;function frame(t){let dt=Math.min(.037,(t-last)/1000||.016);last=t;physics(dt);draw();requestAnimationFrame(frame);}requestAnimationFrame(frame);
+function audioInit(){try{if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();engine=audioCtx.createOscillator();engine.type='sawtooth';filter=audioCtx.createBiquadFilter();filter.type='lowpass';gain=audioCtx.createGain();gain.gain.value=0;engine.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);engine.start();}audioCtx.resume();}catch(e){soundEnabled=false;}}
+function audioUpdate(){if(!audioCtx||!gain)return;let t=audioCtx.currentTime;engine.frequency.setTargetAtTime(43+car.v*2.0+(car.drifting?6:0),t,.10);filter.frequency.setTargetAtTime(170+car.v*11,t,.12);gain.gain.setTargetAtTime(soundEnabled&&run&&!paused?.032:0,t,.13);}
+function dropControls(){Object.keys(held).forEach(k=>held[k]=false);for(const id of ['left','right','brake','drift'])$(id).classList.remove('on');}
+function bind(id,k){let b=$(id);b.addEventListener('pointerdown',e=>{e.preventDefault();held[k]=true;b.classList.add('on');try{b.setPointerCapture(e.pointerId)}catch(_e){}});let up=e=>{e.preventDefault();held[k]=false;b.classList.remove('on');};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);}
+for(const id of ['left','right','drift','brake'])bind(id,id);
+function tiltRaw(e){let a=screen.orientation&&typeof screen.orientation.angle==='number'?screen.orientation.angle:(typeof window.orientation==='number'?window.orientation:0);let simulated=window.innerHeight>window.innerWidth;return (Math.abs(a)===90||simulated)?(a===270||a===-90?1:-1)*e.beta:e.gamma;}
+window.addEventListener('deviceorientation',e=>{let val=tiltRaw(e);if(!Number.isFinite(val))return;let first=!tilt.available;tilt.available=true;tilt.raw=val;gyroRead++;if(first||tilt.requested&&gyroRead===1)tilt.zero=val;if(tilt.active){let d=clamp((val-tilt.zero)*tilt.reverse/23,-1,1);tilt.value=Math.abs(d)<.05?0:mix(tilt.value,d,.26);}},{passive:true});
+async function enableTilt(){tilt.requested=true;gyroRead=0;if(!window.isSecureContext){tilt.active=false;notice('需要 HTTPS 安全网址才能启用重力感应');return;}if(typeof DeviceOrientationEvent==='undefined'){tilt.active=false;notice('该浏览器不支持方向传感器，已使用触屏控制');return;}try{if(typeof DeviceOrientationEvent.requestPermission==='function'){let p=await DeviceOrientationEvent.requestPermission();if(p!=='granted')throw Error('denied');}tilt.active=true;tilt.zero=tilt.raw;tilt.value=0;setTimeout(()=>{if(!tilt.available||gyroRead===0){tilt.active=false;notice('Chrome 未返回倾斜数据，请检查浏览器权限');}else notice('重力转向已启用 · 倾斜手机控制');},1400);}catch(e){tilt.active=false;notice('未获得运动传感器权限，使用方向键控制');}}
+$('calibrate').addEventListener('click',()=>{if(tilt.available){tilt.active=true;tilt.zero=tilt.raw;tilt.value=0;notice('已将当前握持角度设为正中');}else enableTilt();});
+$('tiltMode').addEventListener('click',()=>{tilt.active=!tilt.active;if(tilt.active&&!tilt.available){tilt.active=false;enableTilt();}else{tilt.zero=tilt.raw;tilt.value=0;notice(tilt.active?'已启用重力转向':'已切换为方向键');}$('tiltMode').textContent=tilt.active?'关重力':'开重力';});
+$('flip').addEventListener('click',()=>{tilt.reverse*=-1;tilt.value=0;tilt.zero=tilt.raw;notice('已反转左右倾斜方向');});
+$('gyroCheck').addEventListener('change',()=>{gyroDesired=$('gyroCheck').checked;});
+async function requestLandscape(){
+  // Android may allow orientation lock only in fullscreen; Safari generally does not.
+  // Fullscreen cancels CSS rotation on some browsers, so exit if the device remains portrait.
+  let entered=false;
+  try{const app=$('landscapeApp');if(!document.fullscreenElement&&app.requestFullscreen){await app.requestFullscreen({navigationUI:'hide'});entered=true;}}catch(_e){}
+  try{if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape');}catch(_e){}
+  if(entered)setTimeout(async()=>{if(window.innerHeight>window.innerWidth&&document.fullscreenElement){try{await document.exitFullscreen();}catch(_e){}}},650);
+}
+$('rotate').addEventListener('click',()=>{requestLandscape();notice('已启用横屏显示；如未自动旋转，请横持手机并开启自动旋转');});
+$('mainBtn').addEventListener('click',()=>{audioInit();if(!run||completed){reset();run=true;completed=false;}paused=false;document.body.classList.add('playing');$('panel').classList.add('hide');dropControls();if(gyroDesired&&!tilt.active)enableTilt();else if(!gyroDesired){tilt.active=false;tilt.value=0;notice('方向键转向 · 长按漂移键甩尾');}else notice('倾斜手机转向 · 按住漂移键甩尾');requestLandscape();audioUpdate();});
+function pause(){if(!run)return;paused=!paused;dropControls();if(paused){document.body.classList.remove('playing');$('panel').classList.remove('hide');$('panelDesc').innerHTML='比赛已暂停。<br>返回山道继续完成挑战。';$('mainBtn').textContent='继续驾驶 →';}else{document.body.classList.add('playing');$('panel').classList.add('hide');}audioUpdate();}
+$('pause').addEventListener('click',pause);$('sound').addEventListener('click',()=>{soundEnabled=!soundEnabled;$('sound').textContent=soundEnabled?'♫':'♩';if(soundEnabled)audioInit();audioUpdate();});
+window.addEventListener('keydown',e=>{let keys={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowDown:'brake',KeyS:'brake',Space:'drift',ShiftLeft:'drift'};if(keys[e.code]){held[keys[e.code]]=true;e.preventDefault()}if(e.code==='Escape')pause();});window.addEventListener('keyup',e=>{let keys={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowDown:'brake',KeyS:'brake',Space:'drift',ShiftLeft:'drift'};if(keys[e.code]){held[keys[e.code]]=false;e.preventDefault()}});
+window.addEventListener('blur',dropControls);document.addEventListener('visibilitychange',()=>{if(document.hidden&&run&&!paused)pause();});
+reset();
+})();
+</script></body></html>
